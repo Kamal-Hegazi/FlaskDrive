@@ -153,7 +153,7 @@ flaskdrive/
 
 ## Future Enhancements
 
-- [x] API for third-party integrations (see [API Reference](docs/api_reference.md))
+- [ ] API for third-party integrations (see [API Reference](docs/api_reference.md))
 - [ ] Mobile application support
 - [ ] Advanced file versioning
 
