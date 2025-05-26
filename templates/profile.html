@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - FlaskDrive{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">User Profile</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <i class="fas fa-user-circle fa-7x text-primary mb-3"></i>
+                    <h3>{{ current_user.username }}</h3>
+                    <p class="text-muted">{{ current_user.email }}</p>
+                    <p><small class="text-muted">Member since {{ current_user.created_at.strftime('%Y-%m-%d') }}</small></p>
+                </div>
+                
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.username.label(class="form-label") }}
+                        {% if form.username.errors %}
+                            {{ form.username(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.username.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.username(class="form-control") }}
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.email.label(class="form-label") }}
+                        {% if form.email.errors %}
+                            {{ form.email(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.email(class="form-control") }}
+                        {% endif %}
+                    </div>
+                    <div class="d-grid">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Storage</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">{{ storage_used }} of {{ storage_limit }} used</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Recent Activity</h5>
+            </div>
+            <div class="card-body p-0">
+                {% if activities %}
+                    <ul class="list-group list-group-flush">
+                        {% for activity in activities %}
+                            <li class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <div>
+                                        <i class="
+                                            {% if activity.action == 'upload' %}fas fa-upload text-success
+                                            {% elif activity.action == 'download' %}fas fa-download text-primary
+                                            {% elif activity.action == 'share' %}fas fa-share-alt text-info
+                                            {% elif activity.action == 'unshare' %}fas fa-unlink text-warning
+                                            {% elif activity.action == 'trash' %}fas fa-trash-alt text-danger
+                                            {% elif activity.action == 'restore' %}fas fa-trash-restore text-success
+                                            {% elif activity.action == 'permanent_delete' %}fas fa-times text-danger
+                                            {% elif activity.action == 'star' %}fas fa-star text-warning
+                                            {% elif activity.action == 'unstar' %}fas fa-star text-muted
+                                            {% elif activity.action == 'create_folder' %}fas fa-folder-plus text-primary
+                                            {% elif activity.action == 'delete_folder' %}fas fa-folder-minus text-danger
+                                            {% else %}fas fa-file-alt text-secondary
+                                            {% endif %} me-2"></i>
+                                        
+                                        <strong>{{ activity.action|replace('_', ' ')|title }}</strong>
+                                        
+                                        {% if activity.file %}
+                                            <span>"{{ activity.file.original_filename }}"</span>
+                                        {% elif activity.folder %}
+                                            <span>"{{ activity.folder.name }}"</span>
+                                        {% endif %}
+                                    </div>
+                                    <small class="text-muted">{{ activity.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="p-4 text-center">
+                        <p class="text-muted mb-0">No recent activity</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

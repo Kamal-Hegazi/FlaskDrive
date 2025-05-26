@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Share {{ file.original_filename }} - File Share{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">My Drive</a></li>
+                {% if file.folder %}
+                    <li class="breadcrumb-item"><a href="{{ url_for('view_folder', folder_id=file.folder.id) }}">{{ file.folder.name }}</a></li>
+                {% endif %}
+                <li class="breadcrumb-item active" aria-current="page">{{ file.original_filename }}</li>
+            </ol>
+        </nav>
+        <h1>Share "{{ file.original_filename }}"</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Share with someone</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.email.label(class="form-label") }}
+                        {% if form.email.errors %}
+                            {{ form.email(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.email(class="form-control", placeholder="Enter email address") }}
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.permission.label(class="form-label") }}
+                        {{ form.permission(class="form-select") }}
+                    </div>
+                    <div class="d-grid">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Shared with</h5>
+            </div>
+            <div class="card-body p-0">
+                {% if shared_users %}
+                    <ul class="list-group list-group-flush">
+                        {% for user in shared_users %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-user me-2"></i>
+                                    <span>{{ user.username }} ({{ user.email }})</span>
+                                    <span class="badge bg-{% if user.permission == 'edit' %}primary{% else %}secondary{% endif %} ms-2">
+                                        {{ user.permission }}
+                                    </span>
+                                </div>
+                                <form action="{{ url_for('unshare_file', file_id=file.id, user_id=user.id) }}" method="POST">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-times"></i> Remove
+                                    </button>
+                                </form>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="p-4 text-center">
+                        <p class="text-muted mb-0">This file isn't shared with anyone yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <a href="{{ url_for('view_folder', folder_id=file.folder_id or 0) }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to folder
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

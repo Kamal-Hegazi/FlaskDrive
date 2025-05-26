@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Rename File - FlaskDrive{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Rename File</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-3">Current filename: <strong>{{ file.original_filename }}</strong></p>
+                
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.filename.label(class="form-label") }}
+                        {% if form.filename.errors %}
+                            {{ form.filename(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.filename.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.filename(class="form-control") }}
+                        {% endif %}
+                    </div>
+                    <div class="d-grid">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <a href="{{ url_for('view_folder', folder_id=file.folder_id) }}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

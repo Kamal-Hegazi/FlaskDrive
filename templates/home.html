@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Home - FlaskDrive{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-6">
+            <h1 class="display-4 fw-bold">Your Files, Anywhere, Anytime</h1>
+            <p class="lead">Store, share, and collaborate on files and folders from any mobile device, tablet, or computer</p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-4 mb-lg-3">
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg px-4 me-md-2 fw-bold">Go to Dashboard</a>
+                {% else %}
+                    <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg px-4 me-md-2 fw-bold">Sign Up</a>
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-secondary btn-lg px-4">Login</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-6 d-flex justify-content-center align-items-center">
+            <img src="{{ url_for('static', filename='images/cloud-storage.svg') }}" class="img-fluid" alt="Cloud Storage" width="400">
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-lock fa-3x text-primary mb-3"></i>
+                    <h3 class="card-title">Secure Storage</h3>
+                    <p class="card-text">Your files are encrypted and stored securely on our servers.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-share-alt fa-3x text-primary mb-3"></i>
+                    <h3 class="card-title">Easy Sharing</h3>
+                    <p class="card-text">Share files with anyone, even if they don't have an account.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-sync fa-3x text-primary mb-3"></i>
+                    <h3 class="card-title">Always in Sync</h3>
+                    <p class="card-text">Access your files from any device, always up-to-date.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

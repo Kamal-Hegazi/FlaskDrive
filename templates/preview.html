@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ file.original_filename }}</h1>
+        <div>
+            <a href="{{ url_for('download_file', file_id=file.id) }}" class="btn btn-primary">
+                <i class="fas fa-download me-2"></i>Download
+            </a>
+            <a href="{{ url_for('view_folder', folder_id=file.folder_id) }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Folder
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="true">Preview</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-muted">Details</a>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            {% if file_type == 'image' %}
+                <!-- This should never actually render since image files are served directly -->
+                <div class="text-center">
+                    <img src="{{ url_for('preview_file', file_id=file.id) }}" class="img-fluid" alt="{{ file.original_filename }}">
+                </div>
+            
+            {% elif file_type == 'pdf' %}
+                <!-- This should never actually render since PDFs are served directly -->
+                <div class="ratio ratio-16x9">
+                    <iframe src="{{ url_for('preview_file', file_id=file.id) }}" allowfullscreen></iframe>
+                </div>
+            
+            {% elif file_type == 'text' %}
+                <div class="preview-container">
+                    <pre class="preview-text">{{ file_content }}</pre>
+                </div>
+            
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-file fa-5x text-muted mb-3"></i>
+                    <h3 class="text-muted">Preview not available</h3>
+                    <p class="text-muted">This file type cannot be previewed</p>
+                    <a href="{{ url_for('download_file', file_id=file.id) }}" class="btn btn-primary mt-3">
+                        <i class="fas fa-download me-2"></i>Download to view
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    .preview-container {
+        background-color: #f8f9fa;
+        border-radius: 4px;
+        overflow: auto;
+        max-height: 70vh;
+    }
+    
+    .preview-text {
+        padding: 1rem;
+        margin: 0;
+        white-space: pre-wrap;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+</style>
+{% endblock %}

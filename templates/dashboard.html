@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - FlaskDrive{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1>My Drive</h1>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h5 class="card-title">Storage</h5>
+                <p class="card-text">{{ storage_used }} of {{ storage_limit }} used</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h5 class="card-title">Total Files</h5>
+                <p class="card-text display-4">{{ total_files }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h5 class="card-title">Quick Actions</h5>
+                <a href="{{ url_for('view_folder', folder_id=root_folder.id) }}" class="btn btn-primary mb-2 w-100">
+                    <i class="fas fa-folder-open"></i> Open My Drive
+                </a>
+                <a href="{{ url_for('shared_with_me') }}" class="btn btn-outline-primary w-100">
+                    <i class="fas fa-share-alt"></i> Shared with Me
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Recent Files</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% if recent_files %}
+                        {% for file in recent_files %}
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fas fa-file me-2 text-primary"></i>
+                                        <a href="{{ url_for('download_file', file_id=file.id) }}">{{ file.original_filename }}</a>
+                                    </div>
+                                    <small class="text-muted">{{ file.updated_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="list-group-item text-center py-4">
+                            <p class="mb-0 text-muted">No recent files</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% if recent_files %}
+                <div class="card-footer text-center">
+                    <a href="{{ url_for('view_folder', folder_id=root_folder.id) }}">View all files</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Starred Files</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% if starred_files %}
+                        {% for file in starred_files %}
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fas fa-file me-2 text-warning"></i>
+                                        <a href="{{ url_for('download_file', file_id=file.id) }}">{{ file.original_filename }}</a>
+                                    </div>
+                                    <div>
+                                        <form action="{{ url_for('star_file', file_id=file.id) }}" method="POST" class="d-inline">
+                                            <button type="submit" class="btn btn-sm text-warning border-0 p-0">
+                                                <i class="fas fa-star"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="list-group-item text-center py-4">
+                            <p class="mb-0 text-muted">No starred files</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
