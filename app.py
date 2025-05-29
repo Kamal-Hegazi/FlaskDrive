@@ -443,6 +443,8 @@ def preview_file(file_id):
         file_type = 'image'
     elif file_extension == '.pdf':
         file_type = 'pdf'
+    elif file_extension in ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv']:
+        file_type = 'video'
     elif file_extension in ['.txt', '.md', '.py', '.js', '.html', '.css', '.json', '.xml', '.csv']:
         file_type = 'text'
         # Read the file content for text files
@@ -465,8 +467,8 @@ def preview_file(file_id):
         except:
             pass
     
-    # For direct file serving (images, PDFs)
-    if file_type in ['image', 'pdf']:
+    # For direct file serving (images, PDFs, videos)
+    if file_type in ['image', 'pdf', 'video']:
         response = send_file(preview_path, download_name=file.original_filename, as_attachment=False)
         
         # Clean up temporary file after response is sent
@@ -629,6 +631,7 @@ def share_file(file_id):
         ).first()
         
         shared_users.append({
+            'id': user.id,
             'username': user.username,
             'email': user.email,
             'permission': share.permission if share else 'view'

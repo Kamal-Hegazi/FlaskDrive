@@ -55,7 +55,7 @@
                                 <div class="d-flex w-100 justify-content-between align-items-center">
                                     <div>
                                         <i class="fas fa-file me-2 text-primary"></i>
-                                        <a href="{{ url_for('download_file', file_id=file.id) }}">{{ file.original_filename }}</a>
+                                        <a href="{{ url_for('preview_file', file_id=file.id) }}">{{ file.original_filename }}</a>
                                     </div>
                                     <small class="text-muted">{{ file.updated_at.strftime('%Y-%m-%d %H:%M') }}</small>
                                 </div>
@@ -88,7 +88,7 @@
                                 <div class="d-flex w-100 justify-content-between align-items-center">
                                     <div>
                                         <i class="fas fa-file me-2 text-warning"></i>
-                                        <a href="{{ url_for('download_file', file_id=file.id) }}">{{ file.original_filename }}</a>
+                                        <a href="{{ url_for('preview_file', file_id=file.id) }}">{{ file.original_filename }}</a>
                                     </div>
                                     <div>
                                         <form action="{{ url_for('star_file', file_id=file.id) }}" method="POST" class="d-inline">
