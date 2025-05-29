@@ -54,9 +54,18 @@ The file will be encrypted and stored securely in your drive.
 
 ### Previewing Files
 
-- Click on a file name to preview it
-- Supported file types include images, PDFs, and text files
-- Binary files that can't be previewed will be downloaded instead
+- Click on any file row or the preview button (eye icon) to open a popup preview
+- The file will be displayed in a modal window without leaving your current page
+- Supported file types include:
+  - Images (jpg, jpeg, png, gif, etc.)
+  - PDFs
+  - Videos (mp4, webm, etc.)
+  - Text files (txt, md, py, js, html, css, etc.)
+- For unsupported file types, you'll see a message that preview isn't available
+- Options in the preview window:
+  - Download the file directly
+  - Open the file in a new tab if needed
+- To close the preview, click outside the modal or the X button
 
 ### Renaming Files
 

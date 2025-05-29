@@ -142,6 +142,77 @@ To add new features to FlaskDrive:
 4. Create or modify templates in templates/
 5. Add any necessary static assets in static/
 
+### Modal File Preview Functionality
+
+The application implements a Google Drive-like popup preview system that allows users to preview files without leaving their current page:
+
+1. **Frontend Implementation**:
+   - Modal dialog in base.html template:
+   ```html
+   <!-- File Preview Modal -->
+   <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+       <div class="modal-dialog modal-xl modal-dialog-centered modal-fullscreen-lg-down">
+           <div class="modal-content">
+               <!-- Modal header with title and action buttons -->
+               <div class="modal-header py-2">
+                   <h5 class="modal-title" id="previewModalLabel">File Preview</h5>
+                   <div class="ms-auto me-2">
+                       <a href="#" id="previewDownloadBtn" class="btn btn-primary btn-sm">
+                           <i class="fas fa-download me-1"></i> Download
+                       </a>
+                       <a href="#" id="previewOpenNewTabBtn" class="btn btn-outline-primary btn-sm ms-1" target="_blank">
+                           <i class="fas fa-external-link-alt me-1"></i> Open in New Tab
+                       </a>
+                   </div>
+                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <!-- Modal body where content is displayed -->
+               <div class="modal-body p-1" id="previewModalBody"></div>
+           </div>
+       </div>
+   </div>
+   ```
+
+2. **Backend Implementation**:
+   - Enhanced preview_file route in app.py that handles different viewing modes:
+   ```python
+   @app.route('/preview/<int:file_id>')
+   @login_required
+   def preview_file(file_id):
+       # Get parameters from query string
+       direct = request.args.get('direct', type=int)  # For new tab viewing
+       inline = request.args.get('inline', type=int)  # For inline content
+       modal = request.args.get('modal', type=int)    # For modal popup
+       
+       # File access verification and processing...
+       
+       # Return JSON for modal preview
+       if modal:
+           return jsonify({
+               'filename': file.original_filename,
+               'file_type': file_type,
+               'extension': file_extension[1:],
+               'file_id': file.id,
+               'content': file_content if file_type == 'text' else None
+           })
+       
+       # File serving for direct/inline viewing
+       if direct or inline:
+           return send_file(path, download_name=filename, as_attachment=False)
+   ```
+
+3. **JavaScript Implementation**:
+   - AJAX-based file content loading in script.js
+   - Event handlers for preview buttons and file rows
+   - Dynamic content rendering based on file type
+
+4. **CSS Optimizations**:
+   - Responsive design for different screen sizes
+   - Content-specific styling for various file types
+   - Optimized to avoid unnecessary scrollbars
+
+This implementation creates a seamless user experience while maintaining proper access controls.
+
 ### Example: Adding File Versioning
 
 To implement file versioning:

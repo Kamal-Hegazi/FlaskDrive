@@ -1,6 +1,9 @@
 // Custom JavaScript for File Share application
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize the file preview modal functionality
+    initFilePreviewModal();
+    
     // Initialize tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function (tooltipTriggerEl) {
@@ -124,4 +127,122 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
+    
+    // Set up file preview buttons
+    document.querySelectorAll('.file-item').forEach(function(fileItem) {
+        const fileId = fileItem.dataset.fileId;
+        if (fileId) {
+            // Make the entire file item clickable for preview
+            fileItem.addEventListener('click', function(e) {
+                // Don't trigger for clicks on buttons or links within the file item
+                if (e.target.closest('a, button, .dropdown')) return;
+                e.preventDefault();
+                previewFile(fileId);
+            });
+        }
+    });
+    
+    // Handle dedicated preview buttons click events
+    document.querySelectorAll('.preview-file-btn').forEach(function(button) {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation(); // Stop event bubbling
+            const fileId = this.getAttribute('data-file-id');
+            if (fileId) {
+                previewFile(fileId);
+            }
+        });
+    });
 });
+
+// File Preview Modal Functions
+function initFilePreviewModal() {
+    // Create references to modal elements
+    window.previewModal = {
+        modal: document.getElementById('previewModal'),
+        title: document.getElementById('previewModalLabel'),
+        body: document.getElementById('previewModalBody'),
+        downloadBtn: document.getElementById('previewDownloadBtn'),
+        openNewTabBtn: document.getElementById('previewOpenNewTabBtn'),
+        bsModal: new bootstrap.Modal(document.getElementById('previewModal'))
+    };
+}
+
+function previewFile(fileId) {
+    if (!window.previewModal) return;
+    
+    // Show loading spinner
+    window.previewModal.body.innerHTML = `
+        <div class="text-center py-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    `;
+    
+    // Show the modal
+    window.previewModal.bsModal.show();
+    
+    // Setup download and open in new tab buttons
+    window.previewModal.downloadBtn.href = `/download/${fileId}`;
+    window.previewModal.openNewTabBtn.href = `/preview/${fileId}?direct=1`;
+    
+    // Fetch file preview content
+    fetch(`/preview/${fileId}?modal=1`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error loading preview');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Update modal title
+            window.previewModal.title.textContent = data.filename || 'File Preview';
+            
+            // Handle different file types
+            if (data.file_type === 'image') {
+                window.previewModal.body.innerHTML = `
+                    <div class="preview-container">
+                        <img src="/preview/${fileId}?inline=1" alt="${data.filename}">
+                    </div>
+                `;
+            } else if (data.file_type === 'pdf') {
+                window.previewModal.body.innerHTML = `
+                    <div class="ratio ratio-16x9">
+                        <iframe src="/preview/${fileId}?inline=1" allowfullscreen></iframe>
+                    </div>
+                `;
+            } else if (data.file_type === 'video') {
+                window.previewModal.body.innerHTML = `
+                    <div class="preview-container">
+                        <video controls preload="metadata">
+                            <source src="/preview/${fileId}?inline=1" type="video/${data.extension}">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                `;
+            } else if (data.file_type === 'text') {
+                window.previewModal.body.innerHTML = `
+                    <div class="preview-container">
+                        <pre class="preview-text">${data.content}</pre>
+                    </div>
+                `;
+            } else {
+                window.previewModal.body.innerHTML = `
+                    <div class="text-center py-3">
+                        <i class="fas fa-file fa-4x text-muted mb-2"></i>
+                        <h4 class="text-muted">Preview not available</h4>
+                        <p class="text-muted">This file type cannot be previewed</p>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Preview error:', error);
+            window.previewModal.body.innerHTML = `
+                <div class="alert alert-danger">
+                    Error loading preview: ${error.message}
+                </div>
+            `;
+        });
+}

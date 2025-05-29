@@ -410,6 +410,11 @@ def download_file(file_id):
 @app.route('/preview/<int:file_id>')
 @login_required
 def preview_file(file_id):
+    # Get parameters from query string
+    direct = request.args.get('direct', type=int)
+    inline = request.args.get('inline', type=int)
+    modal = request.args.get('modal', type=int)
+    
     file = File.query.get_or_404(file_id)
     
     # Check if user has permission to preview this file
@@ -467,8 +472,20 @@ def preview_file(file_id):
         except:
             pass
     
-    # For direct file serving (images, PDFs, videos)
-    if file_type in ['image', 'pdf', 'video']:
+    # For modal preview requests, return JSON with file information
+    if modal:
+        from flask import jsonify
+        response_data = {
+            'filename': file.original_filename,
+            'file_type': file_type,
+            'extension': file_extension[1:] if file_extension else '',
+            'file_id': file.id,
+            'content': file_content if file_type == 'text' else None
+        }
+        return jsonify(response_data)
+    
+    # For direct viewing in new tab or inline media content
+    if direct or (inline and file_type in ['image', 'pdf', 'video']):
         response = send_file(preview_path, download_name=file.original_filename, as_attachment=False)
         
         # Clean up temporary file after response is sent

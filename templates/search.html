@@ -51,7 +51,7 @@
                         </thead>
                         <tbody>
                             {% for file in files %}
-                                <tr>
+                                <tr class="file-item" data-file-id="{{ file.id }}" style="cursor: pointer;">
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-file me-2 text-primary"></i>
@@ -79,8 +79,14 @@
                                     <td>{{ file.updated_at.strftime('%Y-%m-%d %H:%M') }}</td>
                                     <td>
                                         <div class="btn-group">
+                                            <button type="button" class="btn btn-sm btn-outline-primary preview-file-btn" data-file-id="{{ file.id }}">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
                                             <a href="{{ url_for('download_file', file_id=file.id) }}" class="btn btn-sm btn-outline-primary">
                                                 <i class="fas fa-download"></i>
+                                            </a>
+                                            <a href="{{ url_for('rename_file', file_id=file.id) }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit"></i>
                                             </a>
                                             <a href="{{ url_for('share_file', file_id=file.id) }}" class="btn btn-sm btn-outline-primary">
                                                 <i class="fas fa-share-alt"></i>
@@ -88,6 +94,11 @@
                                             <form action="{{ url_for('star_file', file_id=file.id) }}" method="POST" class="d-inline">
                                                 <button type="submit" class="btn btn-sm btn-outline-primary">
                                                     <i class="fas fa-star {% if file.is_starred %}text-warning{% endif %}"></i>
+                                                </button>
+                                            </form>
+                                            <form action="{{ url_for('delete_file', file_id=file.id) }}" method="POST" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to move this file to trash?');">
+                                                    <i class="fas fa-trash-alt"></i>
                                                 </button>
                                             </form>
                                         </div>

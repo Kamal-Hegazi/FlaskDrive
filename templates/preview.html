@@ -7,6 +7,9 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>{{ file.original_filename }}</h1>
         <div>
+            <a href="{{ url_for('preview_file', file_id=file.id, direct=1) }}" target="_blank" class="btn btn-outline-primary">
+                <i class="fas fa-external-link-alt me-2"></i>Open in New Tab
+            </a>
             <a href="{{ url_for('download_file', file_id=file.id) }}" class="btn btn-primary">
                 <i class="fas fa-download me-2"></i>Download
             </a>
@@ -29,22 +32,19 @@
         </div>
         <div class="card-body">
             {% if file_type == 'image' %}
-                <!-- This should never actually render since image files are served directly -->
-                <div class="text-center">
-                    <img src="{{ url_for('preview_file', file_id=file.id) }}" class="img-fluid" alt="{{ file.original_filename }}">
+                <div class="text-center preview-container">
+                    <img src="{{ url_for('preview_file', file_id=file.id, inline=1) }}" class="img-fluid" alt="{{ file.original_filename }}">
                 </div>
             
             {% elif file_type == 'pdf' %}
-                <!-- This should never actually render since PDFs are served directly -->
-                <div class="ratio ratio-16x9">
-                    <iframe src="{{ url_for('preview_file', file_id=file.id) }}" allowfullscreen></iframe>
+                <div class="ratio ratio-16x9 preview-container">
+                    <iframe src="{{ url_for('preview_file', file_id=file.id, inline=1) }}" allowfullscreen></iframe>
                 </div>
                 
             {% elif file_type == 'video' %}
-                <!-- This should never actually render since videos are served directly -->
-                <div class="text-center">
+                <div class="text-center preview-container">
                     <video controls class="img-fluid" preload="metadata">
-                        <source src="{{ url_for('preview_file', file_id=file.id) }}" type="video/{{ file.original_filename.split('.')[-1] }}">
+                        <source src="{{ url_for('preview_file', file_id=file.id, inline=1) }}" type="video/{{ file.original_filename.split('.')[-1] }}">
                         Your browser does not support the video tag.
                     </video>
                 </div>
@@ -71,21 +71,4 @@
 
 {% block styles %}
 {{ super() }}
-<style>
-    .preview-container {
-        background-color: #f8f9fa;
-        border-radius: 4px;
-        overflow: auto;
-        max-height: 70vh;
-    }
-    
-    .preview-text {
-        padding: 1rem;
-        margin: 0;
-        white-space: pre-wrap;
-        font-family: 'Courier New', Courier, monospace;
-        font-size: 0.9rem;
-        line-height: 1.5;
-    }
-</style>
 {% endblock %}

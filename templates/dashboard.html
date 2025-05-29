@@ -51,13 +51,18 @@
                 <div class="list-group list-group-flush">
                     {% if recent_files %}
                         {% for file in recent_files %}
-                            <div class="list-group-item">
+                            <div class="list-group-item file-item" data-file-id="{{ file.id }}" style="cursor: pointer;">
                                 <div class="d-flex w-100 justify-content-between align-items-center">
                                     <div>
                                         <i class="fas fa-file me-2 text-primary"></i>
-                                        <a href="{{ url_for('preview_file', file_id=file.id) }}">{{ file.original_filename }}</a>
+                                        <span>{{ file.original_filename }}</span>
                                     </div>
-                                    <small class="text-muted">{{ file.updated_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                    <div class="d-flex align-items-center">
+                                        <small class="text-muted me-2">{{ file.updated_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                        <button type="button" class="btn btn-sm btn-outline-primary preview-file-btn" data-file-id="{{ file.id }}">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         {% endfor %}
@@ -84,13 +89,16 @@
                 <div class="list-group list-group-flush">
                     {% if starred_files %}
                         {% for file in starred_files %}
-                            <div class="list-group-item">
+                            <div class="list-group-item file-item" data-file-id="{{ file.id }}" style="cursor: pointer;">
                                 <div class="d-flex w-100 justify-content-between align-items-center">
                                     <div>
                                         <i class="fas fa-file me-2 text-warning"></i>
-                                        <a href="{{ url_for('preview_file', file_id=file.id) }}">{{ file.original_filename }}</a>
+                                        <span>{{ file.original_filename }}</span>
                                     </div>
-                                    <div>
+                                    <div class="d-flex align-items-center">
+                                        <button type="button" class="btn btn-sm btn-outline-primary me-1 preview-file-btn" data-file-id="{{ file.id }}">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
                                         <form action="{{ url_for('star_file', file_id=file.id) }}" method="POST" class="d-inline">
                                             <button type="submit" class="btn btn-sm text-warning border-0 p-0">
                                                 <i class="fas fa-star"></i>
