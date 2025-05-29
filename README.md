@@ -33,7 +33,8 @@ FlaskDrive is a secure cloud storage application that replicates the core functi
 - 🔐 CSRF protection
 
 ### User Experience
-- 👁️ File preview for common formats (images, PDFs, text files)
+- 👁️ Google Drive-like popup preview for files without leaving the current page
+- 🖼️ Support for previewing images, PDFs, videos, and text files in a modal window
 - ⭐ Favorite/star important files
 - 🗑️ Trash bin for deleted files
 - 📊 Storage usage visualization
